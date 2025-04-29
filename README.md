@@ -1,6 +1,19 @@
 # `tome`
 A simple wrapper to make terminal note taking a reflex.
 
+## Usage
+
+For now start by:
+```
+mkdir -p ~/.tome
+# if on mac, we'll need to get gdate
+brew install coreutils
+```
+
+`tome date [date]`
+`tome note [name]`
+`tome recent [count]`
+
 ## Context
 I've used the following bash functions in my source file for years:
 ```
