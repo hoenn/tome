@@ -1,4 +1,4 @@
-# `labnotes`
+# `tome`
 A simple wrapper to make terminal note taking a reflex.
 
 ## Context
