@@ -1,13 +1,17 @@
 # `tome`
-A simple wrapper to make terminal note taking a reflex.
+Magic terminal note taking.
 
 ## Usage
 
 For now start by:
 ```
-mkdir -p ~/.tome
 # if on mac, we'll need to get gdate
 brew install coreutils
+
+mkdir -p ~/.tome
+mkdir -p ~/.tome/templates
+# add this to your bashrc/bash_profile
+source tome-completion.bash
 ```
 
 `tome date [date]`
@@ -39,6 +43,6 @@ If I was to extend the functionality of this super simple approach, this are the
 - Natively works with git but doesn't offer any shortcuts to a simple commit-push loop
 - Lacks tab completion for `notes foo`
 - Doesn't provide or account for any sort of simple templates, even for basic frontmatter
-- Solves lightweight directory use (`notes foo/bar` -> `vim ./notes/foo/bar.md`) but doesn't create new directories.
+- Solves lightweight directory use (`notes foo/bar` -> `vim ./notes/foo/bar.md`) and auto create new directories.
 - `labnotes` scales poorly in a single directory, having `./notes/YEAR/MONTH/foo` would help here.
 - Showing recently edited notes would be really handy.

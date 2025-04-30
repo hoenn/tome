@@ -1,0 +1,154 @@
+
+#!/bin/bash
+# tome - magic terminal note taking.
+
+set -e
+
+CMD="$1"
+shift || true
+
+TOME_ROOT="${TOME_DIR:-$HOME/.tome}"
+EDITOR_CMD="${EDITOR:-vim}"
+
+# -------------------------
+# Argument parsing
+# -------------------------
+TEMPLATE_NAME=""
+POSITIONAL_ARGS=()
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --template=*)
+        TEMPLATE_NAME="${1#--template=}"
+        shift
+        ;;
+      --t=*)
+        TEMPLATE_NAME="${1#--t=}"
+        shift
+        ;;
+      --*)
+        echo "Unknown option: $1"
+        exit 1
+        ;;
+      *)
+        POSITIONAL_ARGS+=("$1")
+        shift
+        ;;
+    esac
+  done
+}
+
+# -------------------------
+# Utilities
+# -------------------------
+ensure_dir() {
+  mkdir -p "$(dirname "$1")"
+}
+
+open_file() {
+  local file="$1"
+  local template_name="$2"
+  ensure_dir "$file"
+
+  if [[ ! -f "$file" ]]; then
+    local template_path=""
+    local templates_dir="$TOME_ROOT/templates"
+
+    if [[ -n "$template_name" && -f "$templates_dir/${template_name}.md" ]]; then
+      template_path="$templates_dir/${template_name}.md"
+    elif [[ -f "$templates_dir/default.md" ]]; then
+      template_path="$templates_dir/default.md"
+    fi
+
+    if [[ -n "$template_path" ]]; then
+      cp "$template_path" "$file"
+    fi
+  fi
+
+  "$EDITOR_CMD" "$file"
+}
+
+# -------------------------
+# Commands
+# -------------------------
+open_named_note() {
+  parse_args "$@"
+  if [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]]; then
+    echo "Error: note name required."
+    exit 1
+  fi
+  local file="$TOME_ROOT/${POSITIONAL_ARGS[*]}.md"
+  open_file "$file" "$TEMPLATE_NAME"
+}
+
+open_dated_note() {
+  parse_args "$@"
+  local input_date="${POSITIONAL_ARGS[*]:-today}"
+
+  local date_formatted year month file
+  date_formatted="$(gdate --date="$input_date" +%Y-%m-%d 2>/dev/null || date -j -f "%Y-%m-%d" "$input_date" "+%Y-%m-%d" 2>/dev/null || date +"%Y-%m-%d")"
+  year="$(gdate --date="$input_date" +%Y 2>/dev/null || date +"%Y")"
+  month="$(gdate --date="$input_date" +%m 2>/dev/null || date +"%m")"
+  file="$TOME_ROOT/$year/$month/$date_formatted.md"
+  open_file "$file" "$TEMPLATE_NAME"
+}
+
+list_recent_notes() {
+  local count="${1:-10}"
+
+  if find . -type f -name '*.md' -printf "%T@ %p\n" >/dev/null 2>&1; then
+    find "$TOME_ROOT" -type f -name '*.md' -printf "%T@ %p\n"
+  else
+    find "$TOME_ROOT" -type f -name '*.md' -exec stat -f "%m %N" {} +
+  fi |
+    sort -n -r |
+    head -n "$count" |
+    while read -r timestamp filepath; do
+      if [[ -n "$timestamp" && -n "$filepath" ]]; then
+        if command -v gdate >/dev/null 2>&1; then
+          printf "%s  %s\n" "$(date -d @"${timestamp}" '+%b %d %H:%M')" "${filepath#$TOME_ROOT/}"
+        else
+          printf "%s  %s\n" "$(date -r "${timestamp}" '+%b %d %H:%M')" "${filepath#$TOME_ROOT/}"
+        fi
+      fi
+    done
+}
+
+list_all_notes() {
+  find "$TOME_ROOT" -type f -name '*.md' | sort | sed "s|$TOME_ROOT/||"
+}
+
+list_templates() {
+  local dir="$TOME_ROOT/templates"
+  if [[ -d "$dir" ]]; then
+    find "$dir" -type f -name "*.md" | sed "s|$dir/||" | sed 's/\.md$//'
+  else
+    echo "No templates directory found."
+  fi
+}
+
+# -------------------------
+# Dispatch
+# -------------------------
+case "$CMD" in
+  note)
+    open_named_note "$@"
+    ;;
+  date)
+    open_dated_note "$@"
+    ;;
+  recent)
+    list_recent_notes "$@"
+    ;;
+  list)
+    list_all_notes
+    ;;
+  templates)
+    list_templates
+    ;;
+  *)
+      echo "Usage: $0 {note|date|recent|list|templates} [args] [--(t)emplate=name]"
+    exit 1
+    ;;
+esac
