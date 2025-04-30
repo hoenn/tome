@@ -115,10 +115,6 @@ list_recent_notes() {
     done
 }
 
-list_all_notes() {
-  find "$TOME_ROOT" -type f -name '*.md' | sort | sed "s|$TOME_ROOT/||"
-}
-
 list_templates() {
   local dir="$TOME_ROOT/templates"
   if [[ -d "$dir" ]]; then
@@ -140,9 +136,6 @@ case "$CMD" in
     ;;
   recent)
     list_recent_notes "$@"
-    ;;
-  list)
-    list_all_notes
     ;;
   templates)
     list_templates
