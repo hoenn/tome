@@ -61,6 +61,7 @@ echo "Installing binary to: $BIN_DIR"
 # Install tome
 # -------------------------------
 mkdir -p "$TOME_ROOT/.templates"
+mkdir -p "$TOME_ROOT/notes"
 mkdir -p "$BIN_DIR"
 cp "$SCRIPT_DIR/tome" "$BIN_DIR/tome"
 chmod +x "$BIN_DIR/tome"

@@ -3,45 +3,37 @@ _tome_completion() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
+  local root="${TOME_DIR:-$HOME/.tome}"
 
-  local commands="note date recent n d r"
+  local commands="note date recent templates n d r"
 
-  # Complete main command
+  # Subcommand completion
   if [[ $COMP_CWORD -eq 1 ]]; then
     COMPREPLY=( $(compgen -W "$commands" -- "$cur") )
     return 0
   fi
 
-  # Autocomplete filenames for `note` and `n`
+  # Note filename completion
   if [[ "$prev" == "note" || "$prev" == "n" ]]; then
-    local root="${TOME_DIR:-$HOME/.tome}"
-    if [[ -d "$root" ]]; then
-      local files=$(find "$root" -type f -name "*.md" 2>/dev/null | sed "s|$root/||; s|\.md$||")
+    if [[ -d "$root/notes" ]]; then
+      local files
+      files=$(find "$root/notes" -type f -name "*.md" 2>/dev/null | sed "s|$root/notes/||; s|\.md$||")
       COMPREPLY=( $(compgen -W "$files" -- "$cur") )
     fi
     return 0
   fi
 
-  # Autocomplete --template and --t options
-  for word in "${COMP_WORDS[@]}"; do
-    if [[ "$word" == "note" || "$word" == "n" || "$word" == "date" || "$word" == "d" ]]; then
-      local templates_dir="${TOME_DIR:-$HOME/.tome}/.templates"
-      if [[ -d "$templates_dir" && "$cur" == --t=* ]]; then
-        local t_input="${cur#--t=}"
-        local templates=$(find "$templates_dir" -type f -name "*.md" 2>/dev/null | sed "s|$templates_dir/||; s|\.md$||")
-        COMPREPLY=( $(compgen -W "$templates" -- "$t_input") )
-        COMPREPLY=( "${COMPREPLY[@]/#/--t=}" )
-        return 0
-      fi
-      if [[ "$cur" == --template=* ]]; then
-        local t_input="${cur#--template=}"
-        local templates=$(find "$templates_dir" -type f -name "*.md" 2>/dev/null | sed "s|$templates_dir/||; s|\.md$||")
-        COMPREPLY=( $(compgen -W "$templates" -- "$t_input") )
-        COMPREPLY=( "${COMPREPLY[@]/#/--template=}" )
-        return 0
-      fi
-    fi
-  done
+  local templates_dir="$root/.templates"
+  local templates=""
+  if [[ -d "$templates_dir" ]]; then
+    templates=$(find "$templates_dir" -type f -name "*.md" 2>/dev/null | sed 's|.*/||; s|\.md$||')
+  fi
+
+  # --template VALUE or --t VALUE
+  if [[ "$prev" == "--template" || "$prev" == "-t" ]]; then
+    COMPREPLY=( $(compgen -W "$templates" -- "$cur") )
+    return 0
+  fi
 }
 
 complete -F _tome_completion tome
