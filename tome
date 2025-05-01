@@ -126,6 +126,20 @@ list_templates() {
 # -------------------------
 # Dispatch
 # -------------------------
+if [[ "$CMD" == "--help" || "$CMD" == "-h" || -z "$CMD" ]]; then
+  echo "Usage: tome {note|n|date|d|recent|r|templates|t} [args] [--template=name|--t=name]"
+  echo
+  echo "Commands:"
+  echo "  note, n       Open or create a named note"
+  echo "  date, d       Open or create a date-based note (default: today)"
+  echo "  recent, r     Show recently edited notes"
+  echo "  templates     List available templates"
+  echo
+  echo "Options:"
+  echo "  --template=name   Use a specific template from .templates/"
+  echo "  --t=name          Short form of --template"
+  exit 0
+fi
 case "$CMD" in
   note | n)
     open_named_note "$@"

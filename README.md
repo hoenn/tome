@@ -1,22 +1,39 @@
 # `tome`
-Magic terminal note taking.
+Magic terminal note taking and journaling.
+
+## Installation
+
+To see options before installing:
+```
+install.sh --help
+```
+
+One line install
+```
+git clone https://github.com/hoenn/tome.git && cd tome && ./install.sh
+```
 
 ## Usage
-
-For now start by:
+Once installed you can run the following command to see which commands are available.
 ```
-# if on mac, we'll need to get gdate
+tome --help
+```
+
+When using `tome date` you can use relative date expressions like in the following examples:
+```
+tome date last thursday
+tome date next thursday
+tome date 2 days
+tome date next wednesday +1 week +1 day
+tome date 1 day ago
+```
+
+
+#### Mac users
+This project uses `gdate` which you'll need to install with brew for `tome date today` to work.
+```
 brew install coreutils
-
-mkdir -p ~/.tome
-mkdir -p ~/.tome/templates
-# add this to your bashrc/bash_profile
-source tome-completion.bash
 ```
-
-`tome date [date]`
-`tome note [name]`
-`tome recent [count]`
 
 ## Context
 I've used the following bash functions in my source file for years:
@@ -32,17 +49,4 @@ notes() {
 }
 ```
 
-These commands are perfectly servicable for my use-case and give me the features I care about most:
-- Use my existing editor without any additional complexity (eg. a plugin)
-- All my notes in one place and in one format
-- Solve for date driven note taking, something I did in a journal previously. `labnotes today` always opens today's notes
-- Organization light, not overburdened with planning a folder structure. Like a paper journal, I'll know where I've left things
-- Highly compatible with existing CLI tooling, they're just markdown files of course.
-
-If I was to extend the functionality of this super simple approach, this are the bits of functionality I'd want the most:
-- Natively works with git but doesn't offer any shortcuts to a simple commit-push loop
-- Lacks tab completion for `notes foo`
-- Doesn't provide or account for any sort of simple templates, even for basic frontmatter
-- Solves lightweight directory use (`notes foo/bar` -> `vim ./notes/foo/bar.md`) and auto create new directories.
-- `labnotes` scales poorly in a single directory, having `./notes/YEAR/MONTH/foo` would help here.
-- Showing recently edited notes would be really handy.
+I've decided to wrap it up and into a more featured but compact tool to share.

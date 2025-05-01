@@ -17,6 +17,15 @@ AUTO_YES="false"
 
 for arg in "$@"; do
   case "$arg" in
+    --help|-h)
+      echo "Usage: ./install.sh [--yes] [--tome-root=DIR] [--bin-dir=DIR]"
+      echo
+      echo "Options:"
+      echo "  --yes             Run without any prompts"
+      echo "  --tome-root=DIR   Directory to store your notes (default: ~/.tome)"
+      echo "  --bin-dir=DIR     Where to install the 'tome' command (default: ~/bin)"
+      exit 0
+      ;;
     --yes|-y)
       AUTO_YES="true"
       ;;
@@ -72,28 +81,6 @@ if [[ -f "$COMPLETION_SRC" ]]; then
 
   echo "To enable it, add this to your ~/.bashrc or ~/.bash_profile:"
   echo "  source $COMPLETION_DEST"
-fi
-
-# -------------------------------
-# Git repo (optional)
-# -------------------------------
-if command -v git >/dev/null 2>&1; then
-  if [[ ! -d "$TOME_ROOT/.git" ]]; then
-    if [[ "$AUTO_YES" == "false" ]]; then
-      read -rp "Would you like to initialize a git repo in $TOME_ROOT? [y/N]: " git_response
-    else
-      git_response="n"
-    fi
-
-    if [[ "$git_response" =~ ^[Yy]$ ]]; then
-      git init "$TOME_ROOT" >/dev/null
-      echo "Initialized git repo in $TOME_ROOT"
-    fi
-  else
-    echo "Git repo already exists in $TOME_ROOT"
-  fi
-else
-  echo "Git is not installed. Skipping repo initialization."
 fi
 
 # -------------------------------
