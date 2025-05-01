@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # tome - magic terminal note taking.
 
@@ -53,7 +52,7 @@ open_file() {
 
   if [[ ! -f "$file" ]]; then
     local template_path=""
-    local templates_dir="$TOME_ROOT/templates"
+    local templates_dir="$TOME_ROOT/.templates"
 
     if [[ -n "$template_name" && -f "$templates_dir/${template_name}.md" ]]; then
       template_path="$templates_dir/${template_name}.md"
@@ -116,7 +115,7 @@ list_recent_notes() {
 }
 
 list_templates() {
-  local dir="$TOME_ROOT/templates"
+  local dir="$TOME_ROOT/.templates"
   if [[ -d "$dir" ]]; then
     find "$dir" -type f -name "*.md" | sed "s|$dir/||" | sed 's/\.md$//'
   else
@@ -128,20 +127,20 @@ list_templates() {
 # Dispatch
 # -------------------------
 case "$CMD" in
-  note)
+  note | n)
     open_named_note "$@"
     ;;
-  date)
+  date | d)
     open_dated_note "$@"
     ;;
-  recent)
+  recent | r)
     list_recent_notes "$@"
     ;;
   templates)
     list_templates
     ;;
   *)
-      echo "Usage: $0 {note|date|recent|list|templates} [args] [--(t)emplate=name]"
+      echo "Usage: $0 {(n)ote|(d)ate|(r)ecent|templates} [args] [--(t)emplate=name]"
     exit 1
     ;;
 esac
