@@ -148,7 +148,7 @@ list_templates() {
 # Dispatch
 # -------------------------
 if [[ "$CMD" == "--help" || "$CMD" == "-h" || -z "$CMD" ]]; then
-  echo "Usage: tome {note|n|date|d|recent|r|templates|t} [args] [--template=name|--t=name]"
+  echo "Usage: tome {note|n|date|d|recent|r|templates} [args] [--template=name|--t=name]"
   echo
   echo "Commands:"
   echo "  note, n       Open or create a named note"
