@@ -19,6 +19,8 @@ Once installed you can run the following command to see which commands are avail
 tome --help
 ```
 
+`tome` only creates markdown files in the `$TOME_ROOT` directory, making it very friendly for use with `git`. This simplicity also makes `tome` work great with Obsidian. Make use of `tome templates` to create consistent note structures that support your vault's linking and tagging organization.
+
 When using `tome date` you can use relative date expressions like in the following examples:
 ```
 tome date today
@@ -30,6 +32,8 @@ tome date 2 days
 tome date next wednesday +1 week +1 day
 tome date 1 day ago
 ```
+
+`tome date` by default will look for the `$TOME_ROOT/.templates/date.md` template if it exists, make use of this for recurring journaling, daily logs, etc.
 
 
 #### Mac users

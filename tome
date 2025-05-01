@@ -90,7 +90,17 @@ open_dated_note() {
   year="$(gdate --date="$input_date" +%Y 2>/dev/null || date +"%Y")"
   month="$(gdate --date="$input_date" +%m 2>/dev/null || date +"%m")"
   file="$TOME_ROOT/$year/$month/$date_formatted.md"
-  open_file "$file" "$TEMPLATE_NAME"
+
+  # override TEMPLATE_NAME logic to default to 'date' if not set
+  local template=""
+
+  if [[ -n "$TEMPLATE_NAME" ]]; then
+    template="$TEMPLATE_NAME"
+  elif [[ -f "$TOME_ROOT/.templates/date.md" ]]; then
+    template="date"
+  fi
+
+  open_file "$file" "$template"
 }
 
 list_recent_notes() {
@@ -114,13 +124,24 @@ list_recent_notes() {
     done
 }
 
+
 list_templates() {
   local dir="$TOME_ROOT/.templates"
-  if [[ -d "$dir" ]]; then
-    find "$dir" -type f -name "*.md" | sed "s|$dir/||" | sed 's/\.md$//'
-  else
-    echo "No templates directory found."
+
+  if [[ ! -d "$dir" ]]; then
+    echo "No templates directory found at $dir"
+    return
   fi
+
+  local templates
+  templates=$(find "$dir" -type f -name "*.md" | sed "s|$dir/||" | sed 's/\.md$//')
+
+  if [[ -z "$templates" ]]; then
+    echo "No templates found in $dir"
+    return
+  fi
+
+  echo "$templates"
 }
 
 # -------------------------
@@ -131,7 +152,7 @@ if [[ "$CMD" == "--help" || "$CMD" == "-h" || -z "$CMD" ]]; then
   echo
   echo "Commands:"
   echo "  note, n       Open or create a named note"
-  echo "  date, d       Open or create a date-based note (default: today)"
+  echo "  date, d       Open or create a date-based note (default: today, will use date.md template by default)"
   echo "  recent, r     Show recently edited notes"
   echo "  templates     List available templates"
   echo
