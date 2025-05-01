@@ -21,6 +21,9 @@ tome --help
 
 When using `tome date` you can use relative date expressions like in the following examples:
 ```
+tome date today
+tome date tomorrow
+tome date yesterday
 tome date last thursday
 tome date next thursday
 tome date 2 days
