@@ -81,7 +81,7 @@ open_named_note() {
     echo "Error: note name required."
     exit 1
   fi
-  local file="$TOME_ROOT/notes/${POSITIONAL_ARGS[*]}.md"
+  local file="$TOME_ROOT/${POSITIONAL_ARGS[*]}.md"
   open_file "$file" "$TEMPLATE_NAME"
 }
 
@@ -117,11 +117,7 @@ list_recent_notes() {
     head -n "$count" |
     while read -r timestamp filepath; do
       if [[ -n "$timestamp" && -n "$filepath" ]]; then
-        if command -v gdate >/dev/null 2>&1; then
-          printf "%s  %s\n" "$(date -d @"${timestamp}" '+%b %d %H:%M')" "${filepath#$TOME_ROOT/}"
-        else
-          printf "%s  %s\n" "$(date -r "${timestamp}" '+%b %d %H:%M')" "${filepath#$TOME_ROOT/}"
-        fi
+        printf "%s  %s\n" "$(gdate -d @"${timestamp}" '+%b %d %H:%M')" "${filepath#$TOME_ROOT/}"
       fi
     done
 }

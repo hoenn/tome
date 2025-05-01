@@ -61,7 +61,6 @@ echo "Installing binary to: $BIN_DIR"
 # Install tome
 # -------------------------------
 mkdir -p "$TOME_ROOT/.templates"
-mkdir -p "$TOME_ROOT/notes"
 mkdir -p "$BIN_DIR"
 cp "$SCRIPT_DIR/tome" "$BIN_DIR/tome"
 chmod +x "$BIN_DIR/tome"
@@ -82,6 +81,19 @@ if [[ -f "$COMPLETION_SRC" ]]; then
 
   echo "To enable it, add this to your ~/.bashrc or ~/.bash_profile:"
   echo "  source $COMPLETION_DEST"
+fi
+
+# -------------------------------
+# gdate check (required on macOS)
+# -------------------------------
+if ! command -v gdate >/dev/null 2>&1; then
+  echo "Warning: 'gdate' (GNU date) not found."
+  echo "  Some date parsing may not work correctly, especially on macOS."
+  echo "  To install it:"
+  echo "    brew install coreutils"
+  echo "  Then run:"
+  echo "    export PATH=\"/opt/homebrew/opt/coreutils/libexec/gnubin:\$PATH\""
+  echo
 fi
 
 # -------------------------------

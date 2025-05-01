@@ -15,9 +15,9 @@ _tome_completion() {
 
   # Note filename completion
   if [[ "$prev" == "note" || "$prev" == "n" ]]; then
-    if [[ -d "$root/notes" ]]; then
+    if [[ -d "$root" ]]; then
       local files
-      files=$(find "$root/notes" -type f -name "*.md" 2>/dev/null | sed "s|$root/notes/||; s|\.md$||")
+      files=$(find "$root" -type f -name "*.md" 2>/dev/null | sed "s|$root/||; s|\.md$||")
       COMPREPLY=( $(compgen -W "$files" -- "$cur") )
     fi
     return 0
